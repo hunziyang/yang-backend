@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yang.portal.test.mapper.StudentMapper">
+
+    <resultMap type="com.yang.portal.test.entity.Student" id="StudentMap">
+        <id property="id" column="ID" jdbcType="INTEGER"/>
+        <result property="name" column="NAME" jdbcType="VARCHAR"/>
+        <result property="age" column="AGE" jdbcType="INTEGER"/>
+        <result property="testId" column="TEST_ID" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getStudentDTO" resultMap="StudentDTOMap">
+        SELECT a.ID, a.`NAME`, a.AGE, t.ID TID, t.`NAME` TNAME
+        FROM `STUDENT` a,
+             `TEST` t
+        WHERE a.TEST_ID = t.ID
+          AND a.ID = #{id}
+    </select>
+
+    <resultMap type="com.yang.portal.test.dto.StudentDTO" id="StudentDTOMap">
+        <result property="id" column="ID" jdbcType="INTEGER"/>
+        <result property="name" column="NAME" jdbcType="VARCHAR"/>
+        <result property="age" column="AGE" jdbcType="INTEGER"/>
+        <association property="test" javaType="com.yang.portal.test.entity.Test">
+            <id column="TID" property="id"/>
+            <result column="TNAME" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getStudentByTestId" resultMap="StudentMap">
+        SELECT * FROM STUDENT WHERE TEST_ID = #{testId}
+    </select>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yang.portal.security.mapper.UserMapper">
+
+    <resultMap type="com.yang.portal.security.entity.User" id="UserMap">
+        <result property="id" column="ID" jdbcType="INTEGER"/>
+        <result property="username" column="USERNAME" jdbcType="VARCHAR"/>
+        <result property="password" column="PASSWORD" jdbcType="VARCHAR"/>
+        <result property="salt" column="SALT" jdbcType="VARCHAR"/>
+        <result property="name" column="NAME" jdbcType="VARCHAR"/>
+        <result property="phone" column="PHONE" jdbcType="VARCHAR"/>
+        <result property="nickname" column="NICKNAME" jdbcType="VARCHAR"/>
+        <result property="gender" column="GENDER" jdbcType="INTEGER"/>
+        <result property="birthday" column="BIRTHDAY" jdbcType="TIMESTAMP"/>
+        <result property="isLocked" column="IS_LOCKED" jdbcType="BOOLEAN"/>
+        <result property="description" column="DESCRIPTION" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="IS_DELETE" jdbcType="BOOLEAN"/>
+        <result property="revision" column="REVISION" jdbcType="INTEGER"/>
+        <result property="createdId" column="CREATED_ID" jdbcType="INTEGER"/>
+        <result property="createdBy" column="CREATED_BY" jdbcType="VARCHAR"/>
+        <result property="createdTime" column="CREATED_TIME" jdbcType="TIMESTAMP"/>
+        <result property="updatedId" column="UPDATED_ID" jdbcType="INTEGER"/>
+        <result property="updatedBy" column="UPDATED_BY" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="UPDATED_TIME" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="getUserByUsername" resultMap="UserMap">
+        SELECT ID,USERNAME,NICKNAME,`PASSWORD`,PHONE,SALT,IS_LOCKED
+        FROM `USER`
+        WHERE USERNAME = #{username}
+          AND UNIQUE_ID = 0
+          AND IS_DELETE = FALSE
+    </select>
+
+    <select id="getUsers" resultMap="UserMap">
+        <include refid="baseSql"/>
+        <choose>
+            <when test="orderBy != null and orderBy == 'createdTime'">
+                ORDER BY CREATED_TIME ASC
+            </when>
+            <when test="orderBy != null and orderBy == '-createdTime'">
+                ORDER BY CREATED_TIME DESC
+            </when>
+            <otherwise>
+                ORDER BY ID DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offSet},#{rows}
+    </select>
+
+    <select id="getUsersCount" resultType="long">
+        SELECT COUNT(1) FROM (<include refid="baseSql"/>) rseult
+    </select>
+    
+    <sql id="baseSql">
+        SELECT <include refid="fieldBase"/> FROM `USER`
+        WHERE IS_DELETE = FALSE
+        <if test="query.username !=null and query.username!= ''">
+            AND USERNAME like CONCAT('%',#{query.username},'%')
+        </if>
+        <if test="query.nickName !=null and query.nickName!= ''">
+            AND NICKNAME like CONCAT('%',#{query.nickName},'%')
+        </if>
+        <if test="query.phone !=null and query.phone!= ''">
+            AND PHONE like CONCAT('%',#{query.phone},'%')
+        </if>
+    </sql>
+
+    <sql id="fieldBase">
+        ID,USERNAME,`NAME`,PHONE,NICKNAME,GENDER,BIRTHDAY,DESCRIPTION
+    </sql>
+
+</mapper>

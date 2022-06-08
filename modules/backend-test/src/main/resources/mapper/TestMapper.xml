@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yang.portal.test.mapper.TestMapper">
+
+    <resultMap type="com.yang.portal.test.entity.Test" id="TestMap">
+        <id property="id" column="ID" jdbcType="INTEGER"/>
+        <result property="name" column="NAME" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="getTestByIdAndName" resultMap="TestMap">
+        SELECT * FROM TEST WHERE ID = #{id} AND `NAME` = #{name}
+    </select>
+
+
+    <select id="getStudentList" resultMap="TMap">
+        SELECT * FROM TEST WHERE ID = #{id}
+    </select>
+
+    <resultMap type="com.yang.portal.test.dto.TestDTO" id="TMap">
+        <id property="id" column="ID" jdbcType="INTEGER"/>
+        <result property="name" column="NAME" jdbcType="VARCHAR"/>
+        <collection property="students" column="ID" ofType="com.yang.portal.test.entity.Student" select="com.yang.portal.test.mapper.StudentMapper.getStudentByTestId"/>
+    </resultMap>
+
+</mapper>

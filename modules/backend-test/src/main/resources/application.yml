@@ -1,0 +1,25 @@
+spring:
+  config:
+    import: core.yml
+  datasource:
+    url: jdbc:mysql://192.168.226.128:3306/backend-test?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2b8
+    username: root
+    password: 123456
+  redis:
+    host: 192.168.226.128
+    port: 6379
+    password: 123456
+    database: 0
+module: test
+swagger:
+  application-name: TEST
+  application-description: yang-test
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+logging:
+  file:
+    path: F:\log\test

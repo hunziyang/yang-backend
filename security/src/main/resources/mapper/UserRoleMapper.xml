@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yang.portal.security.mapper.UserRoleMapper">
+
+    <resultMap type="com.yang.portal.security.entity.UserRole" id="UserRoleMap">
+        <result property="id" column="ID" jdbcType="INTEGER"/>
+        <result property="userId" column="USER_ID" jdbcType="INTEGER"/>
+        <result property="roleId" column="ROLE_ID" jdbcType="INTEGER"/>
+        <result property="uniqueId" column="UNIQUE_ID" jdbcType="INTEGER"/>
+        <result property="description" column="DESCRIPTION" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="IS_DELETE" jdbcType="BOOLEAN"/>
+        <result property="revision" column="REVISION" jdbcType="INTEGER"/>
+        <result property="createdId" column="CREATED_ID" jdbcType="INTEGER"/>
+        <result property="createdBy" column="CREATED_BY" jdbcType="VARCHAR"/>
+        <result property="createdTime" column="CREATED_TIME" jdbcType="TIMESTAMP"/>
+        <result property="updatedId" column="UPDATED_ID" jdbcType="INTEGER"/>
+        <result property="updatedBy" column="UPDATED_BY" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="UPDATED_TIME" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <delete id="deleteUserRoleByRoleId">
+        UPDATE USER_ROLE
+        SET IS_DELETE = TRUE,
+            UNIQUE_ID = ID,
+            UPDATED_BY = #{jwtToken.userPrincipal.nickName},
+            UPDATED_ID = #{jwtToken.userPrincipal.userId},
+            UPDATED_TIME = #{time}
+        WHERE
+            ROLE_ID = #{roleId}
+          AND IS_DELETE = FALSE
+    </delete>
+
+    <select id="getUserRoles" resultMap="getUserRolesMap">
+        <include refid="getUserRoles"/>
+        <choose>
+            <when test="orderBy !=null and orderBy == '-createdTime'">
+                ORDER BY r.CREATED_TIME DESC
+            </when>
+            <when test="orderBy !=null and orderBy == 'createdTime'">
+                ORDER BY r.CREATED_TIME ASC
+            </when>
+            <otherwise>
+                ORDER BY r.ID DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offset},#{rows}
+    </select>
+
+    <select id="getUserRolesCount" resultType="long">
+        SELECT COUNT(1) FROM (<include refid="getUserRoles"/>) result
+    </select>
+
+    <sql id="getUserRoles">
+        SELECT
+            ur.ID,
+            ur.ROLE_ID,
+            ur.USER_ID,
+            ur.DESCRIPTION,
+            ur.CREATED_ID,
+            ur.CREATED_BY,
+            ur.CREATED_TIME,
+            u.NICKNAME,
+            u.USERNAME,
+            r.`NAME` roleName
+        FROM
+            `USER_ROLE` ur,
+            `USER` u,
+            ROLE r
+        WHERE
+            ur.IS_DELETE = FALSE
+          <if test="query.userId != null">
+              AND ur.USER_ID = #{query.userId}
+          </if>
+          <if test="query.userId != null">
+              AND ur.ROLE_ID = #{query.roleId}
+          </if>
+    </sql>
+
+    <resultMap id="getUserRolesMap" type="com.yang.portal.security.service.impl.userRole.UserRoleResponse" extends="UserRoleMap">
+        <result property="nickName" column="NICKNAME" jdbcType="VARCHAR"/>
+        <result property="userName" column="USERNAME" jdbcType="VARCHAR"/>
+        <result property="roleName" column="roleName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+</mapper>
