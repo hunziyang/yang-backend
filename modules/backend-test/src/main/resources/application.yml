@@ -1,0 +1,20 @@
+spring:
+  config:
+    import: core.yml
+  datasource:
+    url: jdbc:mysql://192.168.25.128:3306/backend-test?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2b8
+    username: root
+    password: 123456
+  redis:
+    host: 192.168.25.128
+    port: 6379
+    password: 123456
+    database: 0
+swagger:
+  application-name: test
+  application-description: yang-test
+  application-version: 1.0
+  contact-email: 814230847@qq.com
+  enable: true
+  contact-name: yang-contact
+  try-host: 127.0.0.1
