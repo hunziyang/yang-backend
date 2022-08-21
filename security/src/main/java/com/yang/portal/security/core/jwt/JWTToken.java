@@ -1,6 +1,7 @@
 package com.yang.portal.security.core.jwt;
 
 import com.yang.portal.security.core.UserPrincipal;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
+@Builder
 public class JWTToken implements Authentication {
 
     private String jwt;

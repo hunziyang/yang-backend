@@ -44,12 +44,13 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
         JwtUserDetail jwtUserDetail = (JwtUserDetail) redisTemplate.opsForValue().get(jwt);
-        JWTToken jwtToken = new JWTToken();
-        jwtToken.setJwt(jwt);
-        jwtToken.setAuthenticated(true);
-        jwtToken.setUserPrincipal(jwtUserDetail.getUserPrincipal());
-        jwtToken.setSimpleGrantedAuthorityList(jwtUserDetail.getAuthorities());
+        JWTToken jwtToken = JWTToken.builder()
+                .jwt(jwt)
+                .isAuthenticated(true)
+                .userPrincipal(jwtUserDetail.getUserPrincipal())
+                .simpleGrantedAuthorityList(jwtUserDetail.getAuthorities())
+                .build();
         SecurityContextHolder.getContext().setAuthentication(jwtToken);
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }
